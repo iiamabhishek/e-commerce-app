@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: e-commerce-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/iiamabhishek/e-commerce-app.git'   # <-- update this!
+    targetRevision: HEAD
+    path: e-commerce-app/kubernetes
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: easyshop
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

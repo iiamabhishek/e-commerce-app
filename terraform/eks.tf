@@ -3,7 +3,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.15.1"
 
-  cluster_name                   = local.name
+  cluster_name                   = var.name
   cluster_endpoint_public_access = true
 
   cluster_addons = {
@@ -25,37 +25,31 @@ module "eks" {
   # EKS Managed Node Group(s)
 
   eks_managed_node_group_defaults = {
-
-    instance_types = ["t2.large"]
-
+    instance_types = [var.instance_type]
     attach_cluster_primary_security_group = true
-
   }
 
-
   eks_managed_node_groups = {
-
     tws-demo-ng = {
-      min_size     = 2
+      min_size     = 1
       max_size     = 3
-      desired_size = 2
+      desired_size = 1
 
-      instance_types = ["t2.large"]
+      instance_types = [var.instance_type]
       capacity_type  = "SPOT"
 
-      disk_size = 35 
-      use_custom_launch_template = false  # Important to apply disk size!
+      disk_size = var.disk_size
+      use_custom_launch_template = false
 
       tags = {
-        Name = "tws-demo-ng"
-        Environment = "dev"
-        ExtraTag = "e-commerce-app"
+        Name        = var.name
+        Environment = var.environment
+        ExtraTag    = "e-commerce-app"
       }
     }
   }
  
-  tags = local.tags
-
+  tags = var.tags
 
 }
 
